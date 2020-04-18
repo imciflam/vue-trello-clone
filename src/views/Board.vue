@@ -4,7 +4,12 @@
       <div class="column" v-for="(column, $colInd) of board.columns" :key="$colInd">
         <div class="flex items-center mb-2 font-bold">{{column.name}}</div>
         <div class="list-reset">
-          <div class="task" v-for="(task, $taskInd) of column.tasks" :key="$taskInd">
+          <div
+            class="task"
+            v-for="(task, $taskInd) of column.tasks"
+            :key="$taskInd"
+            @click="goToTask(task)"
+          >
             <span class="w-full flex-no-shrink font-bold">{{task.name}}</span>
             <p
               v-if="task.description"
@@ -13,6 +18,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="task-bg" v-if="isTaskOpen" @click.self="close">
+      <!--click anywhere but the element-->
+      <router-view />
     </div>
   </div>
 </template>
@@ -23,7 +32,20 @@
 import { mapState } from "vuex";
 
 export default {
-  computed: mapState(["board"])
+  computed: {
+    ...mapState(["board"]),
+    isTaskOpen() {
+      return this.$route.name === "task"; // name of the router view
+    }
+  },
+  methods: {
+    goToTask(task) {
+      this.$router.push({ name: "task", params: { id: task.id } });
+    },
+    close() {
+      this.$router.push({ name: "board" }); // go back to the board
+    }
+  }
 };
 </script>
 
