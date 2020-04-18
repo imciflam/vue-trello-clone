@@ -45,6 +45,10 @@ export default new Vuex.Store({
     UPDATE_TASK(state, { task, key, value }) {
       // Vue.set(task, key, value); also ok
       task[key] = value; // to be able to mutate both name and description
+    },
+    MOVE_TASK(state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
+      const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]; // cut out the task from start column
+      toTasks.splice(toTaskIndex, 0, taskToMove); // and insert it into destination
     }
   }
 });

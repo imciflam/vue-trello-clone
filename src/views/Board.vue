@@ -1,13 +1,22 @@
 <template>
   <div class="board">
     <div class="flex flex-row items-start">
-      <div class="column" v-for="(column, $colInd) of board.columns" :key="$colInd">
+      <div
+        class="column"
+        v-for="(column, $colInd) of board.columns"
+        :key="$colInd"
+        @drop="moveTask($event, column.tasks)"
+        @dragover.prevent
+        @dragenter.prevent
+      >
         <div class="flex items-center mb-2 font-bold">{{column.name}}</div>
         <div class="list-reset">
           <div
             class="task"
             v-for="(task, $taskInd) of column.tasks"
             :key="$taskInd"
+            draggable
+            @dragstart="pickupTask($event, $taskInd, $colInd)"
             @click="goToTask(task)"
           >
             <span class="w-full flex-no-shrink font-bold">{{task.name}}</span>
@@ -16,6 +25,7 @@
               class="w-full flex-no-shrink mt-1 text-sm"
             >{{task.description}}</p>
           </div>
+
           <input
             type="text"
             class="block p-2 w-full bg-transparent"
@@ -55,9 +65,25 @@ export default {
       // event and the task list
       this.$store.commit("CREATE_TASK", {
         tasks,
-        name: e.target.value // data from an sinput
+        name: e.target.value // data from an input
       });
       e.target.value = ""; // clear the inputs
+    },
+    pickupTask(e, taskIndex, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.setData("task-index", taskIndex); // allows only string
+      e.dataTransfer.setData("from-column-index", fromColumnIndex);
+    },
+    moveTask(e, toTasks) {
+      const fromColumnIndex = e.dataTransfer.getData("from-column-index"); // we set it before
+      const fromTasks = this.board.columns[fromColumnIndex].tasks;
+      const taskIndex = e.dataTransfer.getData("task-index");
+      this.$store.commit("MOVE_TASK", {
+        fromTasks,
+        toTasks,
+        taskIndex // index of the task we want to move
+      });
     }
   }
 };
