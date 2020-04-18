@@ -20,7 +20,11 @@
             draggable
             @dragstart="pickupTask($event, $taskInd, $colInd)"
             @click="goToTask(task)"
+            @dragover.prevent
+            @dragenter.prevent
+            @drop.stop="moveTask($event, column.tasks,$taskInd)"
           >
+            <!--stopping propagation event from moving up so we wpn't get event x 2 on parent -->
             <span class="w-full flex-no-shrink font-bold">{{task.name}}</span>
             <p
               v-if="task.description"
@@ -74,7 +78,7 @@ export default {
     pickupTask(e, taskIndex, fromColumnIndex) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("task-index", taskIndex); // allows only string
+      e.dataTransfer.setData("from-task-index", taskIndex); // allows only string
       e.dataTransfer.setData("from-column-index", fromColumnIndex);
       e.dataTransfer.setData("type", "task");
     },
@@ -94,14 +98,15 @@ export default {
       }
     },
 
-    moveTask(e, toTasks) {
+    moveTask(e, toTasks, toTaskIndex) {
       const fromColumnIndex = e.dataTransfer.getData("from-column-index"); // we set it before
       const fromTasks = this.board.columns[fromColumnIndex].tasks;
-      const taskIndex = e.dataTransfer.getData("task-index");
+      const fromTaskIndex = e.dataTransfer.getData("from-task-index");
       this.$store.commit("MOVE_TASK", {
         fromTasks,
+        fromTaskIndex, // index of the task we want to move
         toTasks,
-        taskIndex // index of the task we want to move
+        toTaskIndex
       });
     },
     moveColumn(e, toColumnIndex) {
