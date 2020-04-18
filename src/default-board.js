@@ -7,13 +7,13 @@ export default {
       name: "todo",
       tasks: [
         {
-          description: "",
+          description: "description",
           name: "first task",
           id: 1,
           userAssigned: null
         },
         {
-          description: "",
+          description: "description",
           name: "second task",
           id: uuid(),
           userAssigned: null

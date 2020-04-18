@@ -16,6 +16,12 @@
               class="w-full flex-no-shrink mt-1 text-sm"
             >{{task.description}}</p>
           </div>
+          <input
+            type="text"
+            class="block p-2 w-full bg-transparent"
+            placeholder="+ add a new task"
+            @keyup.enter="createTask($event, column.tasks)"
+          />
         </div>
       </div>
     </div>
@@ -44,6 +50,14 @@ export default {
     },
     close() {
       this.$router.push({ name: "board" }); // go back to the board
+    },
+    createTask(e, tasks) {
+      // event and the task list
+      this.$store.commit("CREATE_TASK", {
+        tasks,
+        name: e.target.value // data from an sinput
+      });
+      e.target.value = ""; // clear the inputs
     }
   }
 };

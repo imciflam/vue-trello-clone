@@ -1,6 +1,11 @@
 <template>
   <div class="task-view">
     <div class="flex flex-col flex-grow justify-between items-start px-4">{{task.name}}</div>
+    <textarea
+      class="relative w-full bg-transparent px-2 border mt-2 h-64 border-none leading-normal"
+      :value="task.description"
+      @change="updateTaskProperty($event, 'description')"
+    />
   </div>
 </template>
 
