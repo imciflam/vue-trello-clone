@@ -35,6 +35,16 @@ export default new Vuex.Store({
         id: uuid(),
         description: ""
       });
+    },
+    CREATE_COLUMN(state, { name }) {
+      state.board.columns.push({
+        name,
+        tasks: []
+      });
+    },
+    UPDATE_TASK(state, { task, key, value }) {
+      // Vue.set(task, key, value); also ok
+      task[key] = value; // to be able to mutate both name and description
     }
   }
 });
