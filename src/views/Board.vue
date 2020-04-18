@@ -22,7 +22,7 @@
             @click="goToTask(task)"
             @dragover.prevent
             @dragenter.prevent
-            @drop.stop="moveTask($event, column.tasks,$taskInd)"
+            @drop.stop="moveTaskOrColumn($event, column.tasks, $colInd,$taskInd)"
           >
             <!--stopping propagation event from moving up so we wpn't get event x 2 on parent -->
             <span class="w-full flex-no-shrink font-bold">{{task.name}}</span>
@@ -89,10 +89,15 @@ export default {
       e.dataTransfer.setData("from-column-index", fromColumnIndex);
       e.dataTransfer.setData("type", "column");
     },
-    moveTaskOrColumn(e, toTasks, toColumnIndex) {
+    moveTaskOrColumn(e, toTasks, toColumnIndex, toTaskIndex) {
       const type = e.dataTransfer.getData("type");
       if (type === "task") {
-        this.moveTask(e, toTasks);
+        // if undefined, then put the task to the end - because we are dragging a task on the column
+        this.moveTask(
+          e,
+          toTasks,
+          toTaskIndex !== undefined ? toTaskIndex : toTask.length
+        );
       } else {
         this.moveColumn(e, toColumnIndex);
       }
